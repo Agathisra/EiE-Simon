@@ -326,8 +326,8 @@ void LedInitialize(void)
   u32 u32Timer;
 //  u8* pu8Parser;
 
-  u32 u32Buzzer1Frequency = 4000;
-  u32 u32Buzzer2Frequency = 500;
+  u32 u32Buzzer1Frequency = 500;
+  u32 u32Buzzer2Frequency = 1000;
   u32 u32StepSize = (u32Buzzer1Frequency - u32Buzzer2Frequency) / 20;
 
   static u8 au8LedStartupMsg[] = "LED functions ready\n\r";
@@ -354,7 +354,7 @@ void LedInitialize(void)
   /* Turn all LEDs on full, then fade them out over a few seconds */
   for(u8 i = 20; i > 0; i--)
   {
-#if STARTUP_SOUND
+#ifdef STARTUP_SOUND
     /* Configure Buzzers to provide some audio during start up */
     PWMAudioSetFrequency(BUZZER1, u32Buzzer1Frequency);
     PWMAudioOn(BUZZER1);
@@ -392,7 +392,7 @@ void LedInitialize(void)
   LedUpdate();
   while( !IsTimeUp(&u32Timer, 200) );
   
-#if STARTUP_SOUND
+#ifdef STARTUP_SOUND
   /* Turn off the buzzers */
   PWMAudioOff(BUZZER1);
 #ifdef  MPGL1

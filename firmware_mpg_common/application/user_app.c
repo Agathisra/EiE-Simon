@@ -88,6 +88,14 @@ Promises:
 */
 void UserAppInitialize(void)
 {
+  LedOff(WHITE);
+  LedOff(PURPLE);
+  LedOff(BLUE);
+  LedOff(CYAN);
+  LedOff(GREEN);
+  LedOff(YELLOW);
+  LedOff(ORANGE);
+  LedOff(RED);
   
   /* If good initialization, set state to Idle */
   if( 1 )
@@ -137,7 +145,93 @@ State Machine Function Definitions
 /* Wait for a message to be queued */
 static void UserAppSM_Idle(void)
 {
+    if( IsButtonPressed(BUTTON0))
+    {
+      // If button is pressed and held, have LED be on.
+      LedOn(WHITE);
+    }
+    else
+    {
+      // When not pressed, turn the LED off.
+      LedOff(WHITE);
+    }
     
+    /*static bool bYellowBlink = FALSE;
+    
+    if( WasButtonPressed(BUTTON1))
+    {
+      //Acknowledge the button press
+      ButtonAcknowledge(BUTTON1);
+      
+      // If the LED is blinking, toggle it off
+      if( bYellowBlink)
+      {
+        bYellowBlink = FALSE;
+        LedOff(YELLOW);
+      }
+      else
+      {
+        // start blinking the LED at the blink rate
+        bYellowBlink = TRUE;
+        LedBlink(YELLOW, LED_8HZ);
+      }
+    }
+    */
+    
+    // if button3 is held for 2 seconds turn on cyan
+    if( IsButtonHeld(BUTTON3, 2000))
+    {
+      LedOn(CYAN);
+    }
+    else
+    {
+      LedOff(CYAN);
+    }
+    
+    //switch( 
+    
+    static LedRateType aeBlinkRate[] = {LED_1HZ, LED_2HZ, LED_4HZ, LED_8HZ};
+    static u8 u8BlinkRateIndex = 0;
+    static bool bLedBlink = FALSE;
+    
+    if( WasButtonPressed(BUTTON1))
+    {
+      //Button press acknowledge
+      ButtonAcknowledge(BUTTON1);
+      
+      //If LED is blinking, toggle it
+      if(bLedBlink)
+      {
+        bLedBlink = FALSE;
+        LedOff(YELLOW);
+      }
+      
+      //else blink LED at the current rate
+      else
+      {
+        bLedBlink = TRUE;
+        LedBlink(YELLOW, aeBlinkRate[u8BlinkRateIndex]);
+      }
+    }
+    
+    if( WasButtonPressed(BUTTON2))
+    {
+      //Acknoewledge the button press
+      ButtonAcknowledge(BUTTON2);
+      
+      // Update the blink rate and kill overflow if LED is blinking
+      if( bLedBlink)
+      {
+        u8BlinkRateIndex++;
+        if( u8BlinkRateIndex == 4)
+        {
+          u8BlinkRateIndex = 0;
+        }
+        // Push the blink rate
+        LedBlink(YELLOW, aeBlinkRate[u8BlinkRateIndex]);
+      }
+    }
+        
 } /* end UserAppSM_Idle() */
      
 

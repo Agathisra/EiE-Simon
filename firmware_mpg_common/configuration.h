@@ -25,7 +25,7 @@ Runtime switches
 //#define MPGL2_R01                   /* Use with MPGL2-EHDW-01 revision board */
 
 #define DEBUG_MODE                /* Define to enable certain debugging code */
-//#define STARTUP_SOUND              /* Define to include buzzer sound on startup */
+#define STARTUP_SOUND              /* Define to include buzzer sound on startup */
 
 //#define USE_SIMPLE_USART0   /* Define to use USART0 as a very simple byte-wise UART for debug purposes */
 
