@@ -59,7 +59,8 @@ Variable names shall start with "UserApp_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp_StateMachine;            /* The state machine function pointer */
 static u32 UserApp_u32Timeout;                      /* Timeout counter used across states */
-
+static u8 UserApp_au8MyName[] = "gnoW nomiS";   
+static u8 UserApp_CursorPosition;
 
 /**********************************************************************************************************************
 Function Definitions
@@ -88,7 +89,13 @@ Promises:
 */
 void UserAppInitialize(void)
 {
-  
+  LCDCommand(LCD_CLEAR_CMD);
+  LCDMessage(LINE1_START_ADDR, UserApp_au8MyName);
+  LCDMessage(0x40, "0");
+  LCDMessage(0x46, "1");
+  LCDMessage(0x4C,"2");
+  LCDMessage(LINE2_END_ADDR, "3");
+ 
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -137,6 +144,82 @@ State Machine Function Definitions
 /* Wait for a message to be queued */
 static void UserAppSM_Idle(void)
 {
+    static bool bCursorOn = FALSE;
+    
+    if(WasButtonPressed(BUTTON0))
+    {
+      ButtonAcknowledge(BUTTON0);
+      LCDCommand(LCD_HOME_CMD);
+      UserApp_CursorPosition = LINE1_START_ADDR;
+      
+      if(bCursorOn)
+      {
+        //if Cursor is on, shut it off
+        LCDCommand(LCD_DISPLAY_CMD | LCD_DISPLAY_ON);
+        bCursorOn = FALSE;
+      }
+      else
+      {
+        //Cursor is off, turn it on
+        LCDCommand(LCD_DISPLAY_CMD | LCD_DISPLAY_ON | 
+                   LCD_DISPLAY_CURSOR | LCD_DISPLAY_BLINK);
+        bCursorOn=TRUE;
+      }
+    } // end if(WasButtonPressed(BUTTON0))   
+    
+    
+  /* BUTTON3 moves the cursor forward one position */
+  if(WasButtonPressed(BUTTON3))
+  {
+    ButtonAcknowledge(BUTTON3);
+    
+    /* Handle the two special cases or just the regular case */
+    if(UserApp_CursorPosition == LINE1_END_ADDR)
+    {
+      UserApp_CursorPosition = LINE2_START_ADDR;
+    }
+
+    else if (UserApp_CursorPosition == LINE2_END_ADDR)
+    {
+      UserApp_CursorPosition = LINE1_START_ADDR;
+    }
+    
+    //Otherwise just increment one space
+    else
+    {
+      UserApp_CursorPosition++;
+    }
+    
+    //New position is set, so update
+    LCDCommand(LCD_ADDRESS_CMD | UserApp_CursorPosition);
+  } // end BUTTON3
+  
+  /* BUTTON1 moves the cursor back one position */
+  if(WasButtonPressed(BUTTON1))
+  {
+    ButtonAcknowledge(BUTTON1);
+    
+    /* Handle the two special cases or just the regular case */
+    if(UserApp_CursorPosition == LINE1_START_ADDR)
+    {
+      UserApp_CursorPosition = LINE2_END_ADDR;
+    }
+
+    else if (UserApp_CursorPosition == LINE2_START_ADDR)
+    {
+      UserApp_CursorPosition = LINE1_END_ADDR;
+    }
+    
+    //Otherwise just increment one space
+    else
+    {
+      UserApp_CursorPosition--;
+    }
+    
+    //New position is set, so update
+    LCDCommand(LCD_ADDRESS_CMD | UserApp_CursorPosition);
+  } // end BUTTON1
+
     
 } /* end UserAppSM_Idle() */
      
