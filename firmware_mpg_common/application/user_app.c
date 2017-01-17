@@ -138,6 +138,18 @@ State Machine Function Definitions
 static void UserAppSM_Idle(void)
 {
     
+    static u8 ARRAY_SIZE = 10;
+    LCDCommand(LCD_CLEAR_CMD);
+    LCDMessage(19, "o");
+    
+    u8 au8Position[ARRAY_SIZE] = {6, 8, 10, 12, 14, 16, 18, 20, 22, 24};
+    for (u8 i = 0; i<ARRAY_SIZE; i++)
+    {
+      if (au8Position[i]>=0 && au8Position[i] <=19)
+      {
+        LCDMessage(0x0+au8Position[i], "o");
+      }
+    }
 } /* end UserAppSM_Idle() */
      
 
@@ -156,7 +168,15 @@ static void UserAppSM_FailedInit(void)
     
 } /* end UserAppSM_FailedInit() */
 
-
+/*
+static void Scroll(*L1_Pos, ARRAY_SIZE)
+{
+  for (u8 i = 0; i < ARRAY_SIZE; i++)
+  {
+    L1_Pos[i]--;
+  }
+} // end Scroll
+*/
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File                                                                                                        */
 /*--------------------------------------------------------------------------------------------------------------------*/
